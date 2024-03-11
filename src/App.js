@@ -94,22 +94,22 @@ export default function App() {
         <ClickedMovie movie={clickedMovie} onClose={handleCloseClicked} />
       )}
       <MovieList
-        data={popular.results}
+        data={popular ? popular.results : "loading..."}
         genre="Popular Movies"
         handleMovieClick={handleMovieClick}
       />
       <MovieList
-        data={action.results}
+        data={action ? action.results : "loading..."}
         genre="Action Movies"
         handleMovieClick={handleMovieClick}
       />
       <MovieList
-        data={comedy.results}
+        data={comedy ? comedy.results : "loading..."}
         genre="Comedies"
         handleMovieClick={handleMovieClick}
       />
       <MovieList
-        data={drama.results}
+        data={drama ? drama.results : "loading..."}
         genre="Dramas"
         handleMovieClick={handleMovieClick}
       />
