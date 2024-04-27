@@ -5,6 +5,7 @@ import ClickedMovie from "./ClickedMovie";
 import Reference from "./reference";
 import { createClient } from "@supabase/supabase-js";
 import { Auth } from "@supabase/auth-ui-react";
+import SavedMovies from "./SavedMovies";
 
 import {
   // Import predefined theme
@@ -22,6 +23,7 @@ export default function App() {
   const [comedy, setComedy] = useState(undefined);
   const [drama, setDrama] = useState(undefined);
   const [clickedMovie, setClickedMovie] = useState(undefined);
+  const [savedMoviesm, setSavedMovies] = useState([]);
 
   const [session, setSession] = useState(null);
 
@@ -113,6 +115,17 @@ export default function App() {
   const signOutUser = async () => {
     const { error } = await supabase.auth.signOut();
   };
+
+  const handleSavedMovies = (movie) => {
+    setSavedMovies((prevMovies) => {
+      const isMovieSaved = prevMovies.find((m) => m.id ==  movie.id);
+      if (isMovieSaved) {
+        return [... prevMovies, movie];
+      }
+      return prevMovies;
+    });
+  };
+
 
   return (
     <div className="App">
