@@ -1,7 +1,7 @@
 import React from "react";
 import "./styles.css";
 
-const ClickedMovie = ({ movie, onClose }) => {
+const ClickedMovie = ({ movie, onClose, saveMovie }) => {
   return (
     <div className="clickedContent">
       <button className="closeButton" onClick={onClose}>
@@ -24,6 +24,9 @@ const ClickedMovie = ({ movie, onClose }) => {
           {movie.vote_average} / 10
         </p>
       </div>
+      <button className="listButton" onClick={saveMovie(movie)}>
+        Add to Watch List
+      </button>
       <img
         src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
         alt={movie.title}

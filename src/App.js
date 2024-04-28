@@ -23,7 +23,7 @@ export default function App() {
   const [comedy, setComedy] = useState(undefined);
   const [drama, setDrama] = useState(undefined);
   const [clickedMovie, setClickedMovie] = useState(undefined);
-  const [savedMoviesm, setSavedMovies] = useState([]);
+  const [savedMovies, setSavedMovies] = useState(undefined);
 
   const [session, setSession] = useState(null);
 
@@ -117,13 +117,7 @@ export default function App() {
   };
 
   const handleSavedMovies = (movie) => {
-    setSavedMovies((prevMovies) => {
-      const isMovieSaved = prevMovies.find((m) => m.id ==  movie.id);
-      if (isMovieSaved) {
-        return [... prevMovies, movie];
-      }
-      return prevMovies;
-    });
+    console.log(movie);
   };
 
 
@@ -162,7 +156,7 @@ export default function App() {
           </div>
           <header>Film Finder</header>
           {clickedMovie && (
-            <ClickedMovie movie={clickedMovie} onClose={handleCloseClicked} />
+            <ClickedMovie movie={clickedMovie} onClose={handleCloseClicked} saveMovie={handleSavedMovies} />
           )}
           <MovieList
             data={popular ? popular.results : "Loading..."}
@@ -184,6 +178,10 @@ export default function App() {
             genre="Dramas"
             handleMovieClick={handleMovieClick}
           />
+          <SavedMovies 
+            data={savedMovies ? savedMovies.results : "Loading..."}
+            genre="Saved Movies"
+            />
           <Reference />
         </>
       )}
