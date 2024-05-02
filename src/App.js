@@ -5,7 +5,6 @@ import ClickedMovie from "./ClickedMovie";
 import Reference from "./reference";
 import { createClient } from "@supabase/supabase-js";
 import { Auth } from "@supabase/auth-ui-react";
-import SavedMovies from "./SavedMovies";
 
 import {
   // Import predefined theme
@@ -44,7 +43,6 @@ export default function App() {
       )
         .then((response) => response.json())
         .then((data) => {
-          console.log(data);
           setPopular(data);
         })
         .catch((err) => {
@@ -86,9 +84,16 @@ export default function App() {
         .catch((err) => {
           console.log(err.message);
         });
-    }
 
-    GetMovies();
+      try {
+        const user = await supabase.auth.getUser();
+        const { data, error } = await supabase
+          .from("saved_movies")
+          .select("*")
+          .eq("user_id", user.data.user.id);
+        setSavedMovies(data);
+      } catch (error) {}
+    }
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
@@ -99,6 +104,7 @@ export default function App() {
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
     });
+    GetMovies();
 
     return () => subscription.unsubscribe();
   }, []);
@@ -116,10 +122,23 @@ export default function App() {
     const { error } = await supabase.auth.signOut();
   };
 
-  const handleSavedMovies = (movie) => {
-    console.log(movie);
+  const addSavedMovie = async (movie) => {
+    const { error } = await supabase.from("saved_movies").insert({
+      title: movie.title,
+      overview: movie.overview,
+      release_date: movie.release_date,
+      vote_average: movie.vote_average,
+      poster_path: movie.poster_path,
+    });
   };
 
+  const handleSavedMovies = (movie) => {
+    addSavedMovie(movie);
+  };
+
+  if (!popular) {
+    return <div>loading...</div>;
+  }
 
   return (
     <div className="App">
@@ -136,6 +155,7 @@ export default function App() {
                 padding: "1rem",
                 borderRadius: "1rem",
                 width: "100%",
+                marginTop: "5rem",
               },
               button: {
                 width: "75%",
@@ -156,7 +176,11 @@ export default function App() {
           </div>
           <header>Film Finder</header>
           {clickedMovie && (
-            <ClickedMovie movie={clickedMovie} onClose={handleCloseClicked} saveMovie={handleSavedMovies} />
+            <ClickedMovie
+              movie={clickedMovie}
+              onClose={handleCloseClicked}
+              saveMovie={handleSavedMovies}
+            />
           )}
           <MovieList
             data={popular ? popular.results : "Loading..."}
@@ -178,10 +202,11 @@ export default function App() {
             genre="Dramas"
             handleMovieClick={handleMovieClick}
           />
-          <SavedMovies 
-            data={savedMovies ? savedMovies.results : "Loading..."}
+          <MovieList
+            data={savedMovies ? savedMovies : "Loading..."}
             genre="Saved Movies"
-            />
+            handleMovieClick={handleMovieClick}
+          />
           <Reference />
         </>
       )}
