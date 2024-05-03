@@ -2,7 +2,9 @@ const Movie = (props) => {
     const handleClick = () => {
       props.handleClick(props.movie);
     };
-  
+      if(props.movie == undefined){
+          return;
+      }
     return (
       <div className="movie" onClick={handleClick}>
         <img
